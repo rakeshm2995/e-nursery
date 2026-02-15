@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Contact Us{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="text-center mb-4">Contact Us</h2>
+    
+    <div class="row">
+        <!-- Left Column: Contact Information -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Get In Touch</h5>
+                    
+                    <!-- Address -->
+                    <p><i class="bi bi-geo-alt"></i> <strong>Address:</strong><br>
+                    123 Green Street, Koramangala<br>
+                    Bangalore, Karnataka - 560034<br>
+                    India</p>
+                    
+                    <!-- Phone -->
+                    <p><i class="bi bi-telephone"></i> <strong>Phone:</strong><br>
+                    +91 98765 43210</p>
+                    
+                    <!-- Email -->
+                    <p><i class="bi bi-envelope"></i> <strong>Email:</strong><br>
+                    support@enursery.com</p>
+                    
+                    <!-- Working Hours -->
+                    <p><i class="bi bi-clock"></i> <strong>Working Hours:</strong><br>
+                    Monday - Saturday: 9:00 AM - 7:00 PM IST<br>
+                    Sunday: 10:00 AM - 5:00 PM IST</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column: Contact Form -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Send Us a Message</h5>
+                    <form>
+                        <!-- Name Field -->
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        
+                        <!-- Email Field -->
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" required>
+                        </div>
+                        
+                        <!-- Subject Field -->
+                        <div class="mb-3">
+                            <label class="form-label">Subject</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        
+                        <!-- Message Field -->
+                        <div class="mb-3">
+                            <label class="form-label">Message</label>
+                            <textarea class="form-control" rows="4" required></textarea>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary w-100">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+```
+

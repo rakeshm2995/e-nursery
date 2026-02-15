@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Manage Orders{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4">Manage Orders</h2>
+    
+    <!-- Orders Table -->
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <!-- Order ID -->
+                    <td>#{{ order.id }}</td>
+                    
+                    <!-- Customer Username -->
+                    <td>{{ order.user.username }}</td>
+                    
+                    <!-- Order Date -->
+                    <td>{{ order.created_at.strftime('%d-%m-%Y') }}</td>
+                    
+                    <!-- Total Amount -->
+                    <td>{{ format_currency(order.total_amount) }}</td>
+                    
+                    <!-- Payment Status -->
+                    <td><span class="badge bg-info">{{ order.payment_status }}</span></td>
+                    
+                    <!-- Order Status Dropdown (Inline Update) -->
+                    <td>
+                        <form method="POST" action="{{ url_for('admin_update_order_status', id=order.id) }}" class="d-inline">
+                            <select name="order_status" class="form-select form-select-sm" onchange="this.form.submit()">
+                                <option value="Pending" {% if order.order_status == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="Confirmed" {% if order.order_status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+                                <option value="Packed" {% if order.order_status == 'Packed' %}selected{% endif %}>Packed</option>
+                                <option value="Shipped" {% if order.order_status == 'Shipped' %}selected{% endif %}>Shipped</option>
+                                <option value="Out for Delivery" {% if order.order_status == 'Out for Delivery' %}selected{% endif %}>Out for Delivery</option>
+                                <option value="Delivered" {% if order.order_status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                                <option value="Cancelled" {% if order.order_status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                            </select>
+                        </form>
+                    </td>
+                    
+                    <!-- View Button -->
+                    <td>
+                        <a href="{{ url_for('order_detail', id=order.id) }}" class="btn btn-sm btn-primary">View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+```
+
+---

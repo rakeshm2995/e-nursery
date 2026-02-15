@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Manage Plants{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <!-- Header with Add Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Manage Plants</h2>
+        <a href="{{ url_for('admin_add_plant') }}" class="btn btn-success"><i class="bi bi-plus-circle"></i> Add Plant</a>
+    </div>
+
+    <!-- Plants Table -->
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for plant in plants %}
+                <tr>
+                    <!-- Plant ID -->
+                    <td>{{ plant.id }}</td>
+
+                    <!-- Plant Image -->
+                    <td><img src="{{ url_for('static', filename='uploads/' + plant.image) }}" width="50" height="50" class="rounded"></td>
+
+                    <!-- Plant Name -->
+                    <td>{{ plant.name }}</td>
+
+                    <!-- Category Badge -->
+                    <td><span class="badge bg-success">{{ plant.category }}</span></td>
+
+                    <!-- Price -->
+                    <td>{{ format_currency(plant.price) }}</td>
+
+                    <!-- Stock with Color-Coded Badge -->
+                    <td>
+                        {% if plant.is_out_of_stock %}
+                        <span class="badge bg-danger">0</span>
+                        {% elif plant.is_low_stock %}
+                        <span class="badge bg-warning">{{ plant.stock }}</span>
+                        {% else %}
+                        <span class="badge bg-success">{{ plant.stock }}</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Action Buttons -->
+                    <td>
+                        <a href="{{ url_for('admin_edit_plant', id=plant.id) }}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
+                        <a href="{{ url_for('admin_delete_plant', id=plant.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Delete this plant?')"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

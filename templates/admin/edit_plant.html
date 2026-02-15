@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}Edit Plant{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Edit Plant</h2>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <div class="row">
+            <!-- Left Column: Essential Fields -->
+            <div class="col-md-6">
+                <!-- Name Field (Pre-filled) -->
+                <div class="mb-3">
+                    <label class="form-label">Name *</label>
+                    <input type="text" name="name" class="form-control" value="{{ plant.name }}" required>
+                </div>
+                
+                <!-- Category Dropdown (Pre-selected) -->
+                <div class="mb-3">
+                    <label class="form-label">Category *</label>
+                    <select name="category" class="form-select" required>
+                        <option value="Medicinal" {% if plant.category == 'Medicinal' %}selected{% endif %}>Medicinal</option>
+                        <option value="Flower" {% if plant.category == 'Flower' %}selected{% endif %}>Flower</option>
+                        <option value="Vegetable" {% if plant.category == 'Vegetable' %}selected{% endif %}>Vegetable</option>
+                        <option value="Fruit" {% if plant.category == 'Fruit' %}selected{% endif %}>Fruit</option>
+                    </select>
+                </div>
+                
+                <!-- Price Field (Pre-filled) -->
+                <div class="mb-3">
+                    <label class="form-label">Price (₹) *</label>
+                    <input type="number" name="price" class="form-control" step="0.01" value="{{ plant.price }}" required>
+                </div>
+                
+                <!-- Stock Field (Pre-filled) -->
+                <div class="mb-3">
+                    <label class="form-label">Stock *</label>
+                    <input type="number" name="stock" class="form-control" value="{{ plant.stock }}" required>
+                </div>
+            </div>
+            
+            <!-- Right Column: Care Instructions -->
+            <div class="col-md-6">
+                <!-- Sunlight Field (Pre-filled) -->
+                <div class="mb-3">
+                    <label class="form-label">Sunlight</label>
+                    <input type="text" name="sunlight" class="form-control" value="{{ plant.sunlight or '' }}">
+                </div>
+                
+                <!-- Water Field (Pre-filled) -->
+                <div class="mb-3">
+                    <label class="form-label">Water</label>
+                    <input type="text" name="water" class="form-control" value="{{ plant.water or '' }}">
+                </div>
+                
+                <!-- Image Update with Preview -->
+                <div class="mb-3">
+                    <label class="form-label">Current Image</label>
+                    <img src="{{ url_for('static', filename='uploads/' + plant.image) }}" width="100" class="d-block mb-2">
+                    <input type="file" name="image" class="form-control" accept="image/*">
+                    <small class="text-muted">Leave empty to keep current image</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Description Field (Pre-filled, Full Width) -->
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3">{{ plant.description or '' }}</textarea>
+        </div>
+        
+        <!-- Care Instructions Field (Pre-filled, Full Width) -->
+        <div class="mb-3">
+            <label class="form-label">Care Instructions</label>
+            <textarea name="care_instructions" class="form-control" rows="3">{{ plant.care_instructions or '' }}</textarea>
+        </div>
+        
+        <!-- Action Buttons -->
+        <button type="submit" class="btn btn-success">Update Plant</button>
+        <a href="{{ url_for('admin_plants') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Edit Supply{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Edit Garden Supply</h2>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <div class="row">
+            <!-- Left Column: Essential Fields -->
+            <div class="col-md-6">
+                <!-- Name Field (Pre-filled) -->
+                <div class="mb-3">
+                    <label class="form-label">Name *</label>
+                    <input type="text" name="name" class="form-control" value="{{ ingredient.name }}" required>
+                </div>
+                
+                <!-- Type Dropdown (Pre-selected) -->
+                <div class="mb-3">
+                    <label class="form-label">Type *</label>
+                    <select name="type" class="form-select" required>
+                        <option value="Fertilizer" {% if ingredient.type == 'Fertilizer' %}selected{% endif %}>Fertilizer</option>
+                        <option value="Soil" {% if ingredient.type == 'Soil' %}selected{% endif %}>Soil</option>
+                        <option value="Pot" {% if ingredient.type == 'Pot' %}selected{% endif %}>Pot</option>
+                        <option value="Tools" {% if ingredient.type == 'Tools' %}selected{% endif %}>Tools</option>
+                        <option value="Seeds" {% if ingredient.type == 'Seeds' %}selected{% endif %}>Seeds</option>
+                    </select>
+                </div>
+                
+                <!-- Price Field (Pre-filled) -->
+                <div class="mb-3">
+                    <label class="form-label">Price (₹) *</label>
+                    <input type="number" name="price" class="form-control" step="0.01" value="{{ ingredient.price }}" required>
+                </div>
+                
+                <!-- Stock Field (Pre-filled) -->
+                <div class="mb-3">
+                    <label class="form-label">Stock *</label>
+                    <input type="number" name="stock" class="form-control" value="{{ ingredient.stock }}" required>
+                </div>
+            </div>
+            
+            <!-- Right Column: Additional Fields -->
+            <div class="col-md-6">
+                <!-- Description Field (Pre-filled) -->
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control" rows="3">{{ ingredient.description or '' }}</textarea>
+                </div>
+                
+                <!-- Image Update with Preview -->
+                <div class="mb-3">
+                    <label class="form-label">Current Image</label>
+                    <img src="{{ url_for('static', filename='uploads/' + ingredient.image) }}" width="100" class="d-block mb-2">
+                    <input type="file" name="image" class="form-control" accept="image/*">
+                    <small class="text-muted">Leave empty to keep current image</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Usage Instructions Field (Pre-filled, Full Width) -->
+        <div class="mb-3">
+            <label class="form-label">Usage Instructions</label>
+            <textarea name="usage_instructions" class="form-control" rows="3">{{ ingredient.usage_instructions or '' }}</textarea>
+        </div>
+        
+        <!-- Action Buttons -->
+        <button type="submit" class="btn btn-success">Update Supply</button>
+        <a href="{{ url_for('admin_ingredients') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
+```
+
+---

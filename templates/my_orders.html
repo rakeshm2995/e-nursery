@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}My Orders{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">My Orders</h2>
+    
+    <!-- Empty State -->
+    {% if orders|length == 0 %}
+    <div class="alert alert-info text-center">
+        You haven't placed any orders yet.
+        <a href="{{ url_for('plants') }}">Start shopping!</a>
+    </div>
+    
+    <!-- Orders Table -->
+    {% else %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <!-- Order ID -->
+                    <td>#{{ order.id }}</td>
+                    
+                    <!-- Order Date -->
+                    <td>{{ order.created_at.strftime('%d-%m-%Y') }}</td>
+                    
+                    <!-- Item Count -->
+                    <td>{{ order.order_items|length }} items</td>
+                    
+                    <!-- Total Amount -->
+                    <td>{{ format_currency(order.total_amount) }}</td>
+                    
+                    <!-- Payment Status -->
+                    <td><span class="badge bg-info">{{ order.payment_status }}</span></td>
+                    
+                    <!-- Order Status -->
+                    <td>
+                        {% if order.order_status == 'Delivered' %}
+                        <span class="badge bg-success">{{ order.order_status }}</span>
+                        {% elif order.order_status == 'Cancelled' %}
+                        <span class="badge bg-danger">{{ order.order_status }}</span>
+                        {% else %}
+                        <span class="badge bg-warning">{{ order.order_status }}</span>
+                        {% endif %}
+                    </td>
+                    
+                    <!-- View Button -->
+                    <td>
+                        <a href="{{ url_for('order_detail', id=order.id) }}" class="btn btn-sm btn-primary">View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

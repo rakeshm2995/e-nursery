@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4">Admin Dashboard</h2>
+    
+    <!-- Statistics Cards Row -->
+    <div class="row g-4 mb-4">
+        <!-- Total Users Card -->
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h3>{{ total_users }}</h3>
+                    <p class="mb-0"><i class="bi bi-people"></i> Total Users</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Plants Card -->
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h3>{{ total_plants }}</h3>
+                    <p class="mb-0"><i class="bi bi-flower1"></i> Total Plants</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Supplies Card -->
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h3>{{ total_ingredients }}</h3>
+                    <p class="mb-0"><i class="bi bi-basket"></i> Total Supplies</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Orders Card -->
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h3>{{ total_orders }}</h3>
+                    <p class="mb-0"><i class="bi bi-cart"></i> Total Orders</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Revenue and Best Sellers Row -->
+    <div class="row mb-4">
+        <!-- Total Revenue Card -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Total Revenue</h5>
+                    <h2 class="price-tag">{{ format_currency(total_revenue) }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Best Sellers Card -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Best Sellers</h5>
+                    {% if most_sold_plant %}
+                    <p><strong>Plant:</strong> {{ most_sold_plant.name }} ({{ most_sold_plant.total_sold }} sold)</p>
+                    {% endif %}
+                    {% if most_sold_ingredient %}
+                    <p><strong>Supply:</strong> {{ most_sold_ingredient.name }} ({{ most_sold_ingredient.total_sold }} sold)</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Low Stock Alerts and Recent Orders Row -->
+    <div class="row mb-4">
+        <!-- Low Stock Alerts Card -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">Low Stock Alerts</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Low Stock Plants -->
+                    <h6>Plants</h6>
+                    {% for plant in low_stock_plants %}
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>{{ plant.name }}</span>
+                        <span class="badge bg-warning">{{ plant.stock }} left</span>
+                    </div>
+                    {% endfor %}
+                    
+                    <!-- Low Stock Supplies -->
+                    <h6 class="mt-3">Supplies</h6>
+                    {% for ing in low_stock_ingredients %}
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>{{ ing.name }}</span>
+                        <span class="badge bg-warning">{{ ing.stock }} left</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Orders Card -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Recent Orders</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in recent_orders %}
+                                <tr>
+                                    <td>#{{ order.id }}</td>
+                                    <td>{{ order.user.username }}</td>
+                                    <td>{{ format_currency(order.total_amount) }}</td>
+                                    <td><span class="badge bg-success">{{ order.order_status }}</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions Row -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Quick Actions</h5>
+                    <a href="{{ url_for('admin_plants') }}" class="btn btn-success me-2"><i class="bi bi-flower1"></i> Manage Plants</a>
+                    <a href="{{ url_for('admin_ingredients') }}" class="btn btn-info me-2"><i class="bi bi-basket"></i> Manage Supplies</a>
+                    <a href="{{ url_for('admin_orders') }}" class="btn btn-warning me-2"><i class="bi bi-cart"></i> Manage Orders</a>
+                    <a href="{{ url_for('admin_users') }}" class="btn btn-primary"><i class="bi bi-people"></i> View Users</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

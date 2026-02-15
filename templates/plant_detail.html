@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% block title %}{{ plant.name }}{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Product Image Column -->
+        <div class="col-md-5">
+            <img src="{{ url_for('static', filename='uploads/' + plant.image) }}" class="img-fluid rounded shadow" alt="{{ plant.name }}">
+        </div>
+
+        <!-- Product Details Column -->
+        <div class="col-md-7">
+            <!-- Breadcrumb Navigation -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('plants') }}">Plants</a></li>
+                    <li class="breadcrumb-item active">{{ plant.name }}</li>
+                </ol>
+            </nav>
+
+            <!-- Plant Name and Category -->
+            <h2>{{ plant.name }}</h2>
+            <span class="badge bg-success mb-3">{{ plant.category }}</span>
+
+            <!-- Rating Display -->
+            {% if plant.average_rating > 0 %}
+            <div class="mb-3">
+                <span class="text-warning fs-5">
+                    {% for i in range(plant.average_rating|int) %}★{% endfor %}
+                    {% if plant.average_rating % 1 >= 0.5 %}☆{% endif %}
+                </span>
+                <span class="text-muted">({{ plant.reviews|length }} reviews)</span>
+            </div>
+            {% endif %}
+
+            <!-- Price -->
+            <h3 class="price-tag mb-4">{{ format_currency(plant.price) }}</h3>
+
+            <!-- Description -->
+            <p class="lead">{{ plant.description }}</p>
+
+            <!-- Care Instructions Card -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5>Care Instructions</h5>
+                    <p><strong><i class="bi bi-sun"></i> Sunlight:</strong> {{ plant.sunlight }}</p>
+                    <p><strong><i class="bi bi-droplet"></i> Water:</strong> {{ plant.water }}</p>
+                    <p><strong><i class="bi bi-info-circle"></i> Care:</strong> {{ plant.care_instructions }}</p>
+                </div>
+            </div>
+
+            <!-- Stock Status -->
+            <div class="mb-3">
+                <strong>Stock:</strong>
+                {% if plant.is_out_of_stock %}
+                <span class="badge bg-danger">Out of Stock</span>
+                {% elif plant.is_low_stock %}
+                <span class="badge bg-warning">{{ plant.stock }} left</span>
+                {% else %}
+                <span class="badge bg-success">In Stock ({{ plant.stock }})</span>
+                {% endif %}
+            </div>
+
+            <!-- Add to Cart Form (Logged In Users) -->
+            {% if current_user.is_authenticated %}
+            <form method="POST" action="{{ url_for('add_to_cart') }}" class="mb-3">
+                <input type="hidden" name="item_type" value="plant">
+                <input type="hidden" name="item_id" value="{{ plant.id }}">
+                <div class="row g-2">
+                    <div class="col-auto">
+                        <input type="number" name="quantity" class="form-control" value="1" min="1" max="{{ plant.stock }}" style="width: 80px;" {% if plant.is_out_of_stock %}disabled{% endif %}>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary" {% if plant.is_out_of_stock %}disabled{% endif %}>
+                            <i class="bi bi-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                    <div class="col-auto">
+                        {% if user_wishlist %}
+                        <a href="{{ url_for('remove_from_wishlist', id=user_wishlist.id) }}" class="btn btn-danger">
+                            <i class="bi bi-heart-fill"></i> Remove from Wishlist
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('add_to_wishlist', plant_id=plant.id) }}" class="btn btn-outline-danger">
+                            <i class="bi bi-heart"></i> Add to Wishlist
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+            {% else %}
+            <!-- Login Prompt (Not Logged In) -->
+            <a href="{{ url_for('login') }}" class="btn btn-primary">Login to Purchase</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <hr class="my-5">
+
+    <!-- Customer Reviews Section -->
+    <h3>Customer Reviews</h3>
+
+    <!-- Review Form (Logged In Users) -->
+    {% if current_user.is_authenticated %}
+    <form method="POST" action="{{ url_for('add_review', plant_id=plant.id) }}" class="mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5>Write a Review</h5>
+                <div class="mb-3">
+                    <label class="form-label">Rating</label>
+                    <select name="rating" class="form-select" required>
+                        <option value="5">5 Stars - Excellent</option>
+                        <option value="4">4 Stars - Good</option>
+                        <option value="3">3 Stars - Average</option>
+                        <option value="2">2 Stars - Below Average</option>
+                        <option value="1">1 Star - Poor</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Comment</label>
+                    <textarea name="comment" class="form-control" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Review</button>
+            </div>
+        </div>
+    </form>
+    {% endif %}
+
+    <!-- Display Reviews -->
+    {% for review in reviews %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <h6>{{ review.user.full_name or review.user.username }}</h6>
+                <span class="text-warning">
+                    {% for i in range(review.rating) %}★{% endfor %}
+                </span>
+            </div>
+            <p class="mb-1">{{ review.comment }}</p>
+            <small class="text-muted">{{ review.created_at.strftime('%d-%m-%Y') }}</small>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Related Plants Section -->
+    {% if related_plants %}
+    <hr class="my-5">
+    <h3>Related Plants</h3>
+    <div class="row g-4">
+        {% for p in related_plants %}
+        <div class="col-md-3">
+            <div class="card">
+                <img src="{{ url_for('static', filename='uploads/' + p.image) }}" class="card-img-top" alt="{{ p.name }}" style="height: 150px; object-fit: cover;">
+                <div class="card-body">
+                    <h6 class="card-title">{{ p.name }}</h6>
+                    <p class="price-tag mb-2">{{ format_currency(p.price) }}</p>
+                    <a href="{{ url_for('plant_detail', id=p.id) }}" class="btn btn-sm btn-outline-primary">View</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Garden Supplies{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Garden Supplies</h2>
+    
+    <!-- Search and Filter Form -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <form method="GET" class="row g-3">
+                <!-- Search Input -->
+                <div class="col-md-4">
+                    <input type="text" name="search" class="form-control" placeholder="Search supplies..." value="{{ request.args.get('search', '') }}">
+                </div>
+                
+                <!-- Type Filter -->
+                <div class="col-md-2">
+                    <select name="type" class="form-select">
+                        <option value="">All Types</option>
+                        {% for t in types %}
+                        <option value="{{ t }}" {% if request.args.get('type') == t %}selected{% endif %}>{{ t }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <!-- Min Price -->
+                <div class="col-md-2">
+                    <input type="number" name="min_price" class="form-control" placeholder="Min ₹" value="{{ request.args.get('min_price', '') }}">
+                </div>
+                
+                <!-- Max Price -->
+                <div class="col-md-2">
+                    <input type="number" name="max_price" class="form-control" placeholder="Max ₹" value="{{ request.args.get('max_price', '') }}">
+                </div>
+                
+                <!-- Filter Button -->
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary w-100">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Products Grid -->
+    <div class="row g-4">
+        {% for ingredient in ingredients %}
+        <div class="col-md-3">
+            <div class="card h-100">
+                <!-- Product Image with Stock Badge -->
+                <div class="position-relative">
+                    <img src="{{ url_for('static', filename='uploads/' + ingredient.image) }}" class="card-img-top" alt="{{ ingredient.name }}" style="height: 200px; object-fit: cover;">
+                    {% if ingredient.is_out_of_stock %}
+                    <span class="badge badge-out-stock position-absolute top-0 end-0 m-2">Out of Stock</span>
+                    {% elif ingredient.is_low_stock %}
+                    <span class="badge badge-low-stock position-absolute top-0 end-0 m-2">Low Stock</span>
+                    {% endif %}
+                </div>
+                
+                <!-- Product Details -->
+                <div class="card-body">
+                    <span class="badge bg-info mb-2">{{ ingredient.type }}</span>
+                    <h5 class="card-title">{{ ingredient.name }}</h5>
+                    <p class="card-text text-muted small">{{ ingredient.description[:80] }}...</p>
+                    <span class="price-tag">{{ format_currency(ingredient.price) }}</span>
+                </div>
+                
+                <!-- View Details Button -->
+                <div class="card-footer bg-white border-0">
+                    <a href="{{ url_for('ingredient_detail', id=ingredient.id) }}" class="btn btn-outline-info w-100">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Empty State -->
+    {% if ingredients|length == 0 %}
+    <div class="alert alert-info text-center">No supplies found matching your criteria.</div>
+    {% endif %}
+</div>
+{% endblock %}

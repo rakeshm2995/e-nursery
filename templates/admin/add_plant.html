@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Add Plant{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Add New Plant</h2>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <div class="row">
+            <!-- Left Column: Essential Fields -->
+            <div class="col-md-6">
+                <!-- Name Field -->
+                <div class="mb-3">
+                    <label class="form-label">Name *</label>
+                    <input type="text" name="name" class="form-control" required>
+                </div>
+                
+                <!-- Category Dropdown -->
+                <div class="mb-3">
+                    <label class="form-label">Category *</label>
+                    <select name="category" class="form-select" required>
+                        <option value="Medicinal">Medicinal</option>
+                        <option value="Flower">Flower</option>
+                        <option value="Vegetable">Vegetable</option>
+                        <option value="Fruit">Fruit</option>
+                    </select>
+                </div>
+                
+                <!-- Price Field -->
+                <div class="mb-3">
+                    <label class="form-label">Price (₹) *</label>
+                    <input type="number" name="price" class="form-control" step="0.01" required>
+                </div>
+                
+                <!-- Stock Field -->
+                <div class="mb-3">
+                    <label class="form-label">Stock *</label>
+                    <input type="number" name="stock" class="form-control" required>
+                </div>
+            </div>
+            
+            <!-- Right Column: Care Instructions -->
+            <div class="col-md-6">
+                <!-- Sunlight Field -->
+                <div class="mb-3">
+                    <label class="form-label">Sunlight</label>
+                    <input type="text" name="sunlight" class="form-control" placeholder="e.g., Full Sun">
+                </div>
+                
+                <!-- Water Field -->
+                <div class="mb-3">
+                    <label class="form-label">Water</label>
+                    <input type="text" name="water" class="form-control" placeholder="e.g., Moderate">
+                </div>
+                
+                <!-- Image Upload -->
+                <div class="mb-3">
+                    <label class="form-label">Image</label>
+                    <input type="file" name="image" class="form-control" accept="image/*">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Description Field (Full Width) -->
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3"></textarea>
+        </div>
+        
+        <!-- Care Instructions Field (Full Width) -->
+        <div class="mb-3">
+            <label class="form-label">Care Instructions</label>
+            <textarea name="care_instructions" class="form-control" rows="3"></textarea>
+        </div>
+        
+        <!-- Action Buttons -->
+        <button type="submit" class="btn btn-success">Add Plant</button>
+        <a href="{{ url_for('admin_plants') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
+```

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}My Wishlist{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">My Wishlist</h2>
+    
+    <!-- Empty Wishlist State -->
+    {% if wishlist_items|length == 0 %}
+    <div class="alert alert-info text-center">
+        Your wishlist is empty. <a href="{{ url_for('plants') }}">Browse plants</a>
+    </div>
+    
+    <!-- Wishlist Items Grid -->
+    {% else %}
+    <div class="row g-4">
+        {% for item in wishlist_items %}
+        <div class="col-md-3">
+            <div class="card h-100">
+                <!-- Plant Image -->
+                <img src="{{ url_for('static', filename='uploads/' + item.plant.image) }}" class="card-img-top" alt="{{ item.plant.name }}" style="height: 200px; object-fit: cover;">
+                
+                <!-- Plant Details -->
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.plant.name }}</h5>
+                    <p class="price-tag">{{ format_currency(item.plant.price) }}</p>
+                    <p class="text-muted small">
+                        {% if item.plant.is_out_of_stock %}
+                        <span class="badge bg-danger">Out of Stock</span>
+                        {% else %}
+                        <span class="badge bg-success">In Stock</span>
+                        {% endif %}
+                    </p>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="card-footer bg-white border-0">
+                    <a href="{{ url_for('move_to_cart', id=item.id) }}" class="btn btn-primary btn-sm w-100 mb-2" {% if item.plant.is_out_of_stock %}disabled{% endif %}>
+                        <i class="bi bi-cart-plus"></i> Move to Cart
+                    </a>
+                    <a href="{{ url_for('remove_from_wishlist', id=item.id) }}" class="btn btn-outline-danger btn-sm w-100">
+                        <i class="bi bi-trash"></i> Remove
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

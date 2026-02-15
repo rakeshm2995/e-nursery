@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}{{ ingredient.name }}{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Product Image Column -->
+        <div class="col-md-5">
+            <img src="{{ url_for('static', filename='uploads/' + ingredient.image) }}" class="img-fluid rounded shadow" alt="{{ ingredient.name }}">
+        </div>
+        
+        <!-- Product Details Column -->
+        <div class="col-md-7">
+            <!-- Breadcrumb Navigation -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('ingredients') }}">Garden Supplies</a></li>
+                    <li class="breadcrumb-item active">{{ ingredient.name }}</li>
+                </ol>
+            </nav>
+            
+            <!-- Product Name and Type -->
+            <h2>{{ ingredient.name }}</h2>
+            <span class="badge bg-info mb-3">{{ ingredient.type }}</span>
+            
+            <!-- Price -->
+            <h3 class="price-tag mb-4">{{ format_currency(ingredient.price) }}</h3>
+            
+            <!-- Description -->
+            <p class="lead">{{ ingredient.description }}</p>
+            
+            <!-- Usage Instructions Card -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5>Usage Instructions</h5>
+                    <p>{{ ingredient.usage_instructions }}</p>
+                </div>
+            </div>
+            
+            <!-- Stock Status -->
+            <div class="mb-3">
+                <strong>Stock:</strong> 
+                {% if ingredient.is_out_of_stock %}
+                <span class="badge bg-danger">Out of Stock</span>
+                {% elif ingredient.is_low_stock %}
+                <span class="badge bg-warning">{{ ingredient.stock }} left</span>
+                {% else %}
+                <span class="badge bg-success">In Stock ({{ ingredient.stock }})</span>
+                {% endif %}
+            </div>
+            
+            <!-- Add to Cart Form (Logged In Users) -->
+            {% if current_user.is_authenticated %}
+            <form method="POST" action="{{ url_for('add_to_cart') }}" class="mb-3">
+                <input type="hidden" name="item_type" value="ingredient">
+                <input type="hidden" name="item_id" value="{{ ingredient.id }}">
+                <div class="row g-2">
+                    <div class="col-auto">
+                        <input type="number" name="quantity" class="form-control" value="1" min="1" max="{{ ingredient.stock }}" style="width: 80px;" {% if ingredient.is_out_of_stock %}disabled{% endif %}>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-info text-white" {% if ingredient.is_out_of_stock %}disabled{% endif %}>
+                            <i class="bi bi-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </form>
+            {% else %}
+            <!-- Login Prompt (Not Logged In) -->
+            <a href="{{ url_for('login') }}" class="btn btn-info text-white">Login to Purchase</a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Related Products Section -->
+    {% if related_ingredients %}
+    <hr class="my-5">
+    <h3>Related Products</h3>
+    <div class="row g-4">
+        {% for ing in related_ingredients %}
+        <div class="col-md-3">
+            <div class="card">
+                <img src="{{ url_for('static', filename='uploads/' + ing.image) }}" class="card-img-top" alt="{{ ing.name }}" style="height: 150px; object-fit: cover;">
+                <div class="card-body">
+                    <h6 class="card-title">{{ ing.name }}</h6>
+                    <p class="price-tag mb-2">{{ format_currency(ing.price) }}</p>
+                    <a href="{{ url_for('ingredient_detail', id=ing.id) }}" class="btn btn-sm btn-outline-info">View</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

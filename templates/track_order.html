@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Track Order{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="text-center mb-4">Track Your Order</h2>
+    
+    <!-- Tracking Number Input Form -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Enter Tracking Number</label>
+                            <input type="text" name="tracking_number" class="form-control" placeholder="e.g., ENO123456" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Track Order</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Order Tracking Details (shown after form submission) -->
+    {% if order %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Order Details</h5>
+                    <p><strong>Order ID:</strong> #{{ order.id }}</p>
+                    <p><strong>Tracking Number:</strong> {{ order.tracking_number }}</p>
+                    <p><strong>Order Date:</strong> {{ order.created_at.strftime('%d-%m-%Y') }}</p>
+                    <p><strong>Estimated Delivery:</strong> {{ order.estimated_delivery.strftime('%d-%m-%Y') }}</p>
+                    
+                    <h6 class="mt-4">Current Status: <span class="badge bg-success">{{ order.order_status }}</span></h6>
+                    
+                    <!-- Status Timeline -->
+                    <div class="mt-4">
+                        <div class="list-group">
+                            <!-- Pending -->
+                            <div class="list-group-item {% if order.order_status == 'Pending' %}active{% endif %}">
+                                <i class="bi bi-clock"></i> Pending
+                            </div>
+                            
+                            <!-- Confirmed -->
+                            <div class="list-group-item {% if order.order_status in ['Confirmed', 'Packed', 'Shipped', 'Out for Delivery', 'Delivered'] %}active{% endif %}">
+                                <i class="bi bi-check-circle"></i> Confirmed
+                            </div>
+                            
+                            <!-- Packed -->
+                            <div class="list-group-item {% if order.order_status in ['Packed', 'Shipped', 'Out for Delivery', 'Delivered'] %}active{% endif %}">
+                                <i class="bi bi-box-seam"></i> Packed
+                            </div>
+                            
+                            <!-- Shipped -->
+                            <div class="list-group-item {% if order.order_status in ['Shipped', 'Out for Delivery', 'Delivered'] %}active{% endif %}">
+                                <i class="bi bi-truck"></i> Shipped
+                            </div>
+                            
+                            <!-- Out for Delivery -->
+                            <div class="list-group-item {% if order.order_status in ['Out for Delivery', 'Delivered'] %}active{% endif %}">
+                                <i class="bi bi-geo-alt"></i> Out for Delivery
+                            </div>
+                            
+                            <!-- Delivered -->
+                            <div class="list-group-item {% if order.order_status == 'Delivered' %}active{% endif %}">
+                                <i class="bi bi-house-check"></i> Delivered
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- View Full Order Button (for authenticated users) -->
+                    <div class="mt-4 text-center">
+                        {% if current_user.is_authenticated and order.user_id == current_user.id %}
+                        <a href="{{ url_for('order_detail', id=order.id) }}" class="btn btn-primary">View Full Order</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

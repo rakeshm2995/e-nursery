@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Add Supply{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Add Garden Supply</h2>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <div class="row">
+            <!-- Left Column: Essential Fields -->
+            <div class="col-md-6">
+                <!-- Name Field -->
+                <div class="mb-3">
+                    <label class="form-label">Name *</label>
+                    <input type="text" name="name" class="form-control" required>
+                </div>
+                
+                <!-- Type Dropdown -->
+                <div class="mb-3">
+                    <label class="form-label">Type *</label>
+                    <select name="type" class="form-select" required>
+                        <option value="Fertilizer">Fertilizer</option>
+                        <option value="Soil">Soil</option>
+                        <option value="Pot">Pot</option>
+                        <option value="Tools">Tools</option>
+                        <option value="Seeds">Seeds</option>
+                    </select>
+                </div>
+                
+                <!-- Price Field -->
+                <div class="mb-3">
+                    <label class="form-label">Price (₹) *</label>
+                    <input type="number" name="price" class="form-control" step="0.01" required>
+                </div>
+                
+                <!-- Stock Field -->
+                <div class="mb-3">
+                    <label class="form-label">Stock *</label>
+                    <input type="number" name="stock" class="form-control" required>
+                </div>
+            </div>
+            
+            <!-- Right Column: Additional Fields -->
+            <div class="col-md-6">
+                <!-- Description Field -->
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <!-- Image Upload -->
+                <div class="mb-3">
+                    <label class="form-label">Image</label>
+                    <input type="file" name="image" class="form-control" accept="image/*">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Usage Instructions Field (Full Width) -->
+        <div class="mb-3">
+            <label class="form-label">Usage Instructions</label>
+            <textarea name="usage_instructions" class="form-control" rows="3"></textarea>
+        </div>
+        
+        <!-- Action Buttons -->
+        <button type="submit" class="btn btn-success">Add Supply</button>
+        <a href="{{ url_for('admin_ingredients') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
+```
+
+---

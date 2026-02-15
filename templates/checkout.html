@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Checkout</h2>
+
+    <div class="row">
+        <!-- Checkout Form Column -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Shipping Address</h5>
+
+                    <!-- Checkout Form -->
+                    <form method="POST" action="{{ url_for('place_order') }}" id="checkoutForm">
+
+                        <!-- Full Name -->
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="full_name" class="form-control" value="{{ current_user.full_name }}" required>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" name="phone" class="form-control" value="{{ current_user.phone }}" required>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            <textarea name="address" class="form-control" rows="2" required>{{ current_user.address }}</textarea>
+                        </div>
+
+                        <!-- City and State -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">City</label>
+                                <input type="text" name="city" class="form-control" value="{{ current_user.city }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">State</label>
+                                <input type="text" name="state" class="form-control" value="{{ current_user.state }}" required>
+                            </div>
+                        </div>
+
+                        <!-- Pincode -->
+                        <div class="mb-3">
+                            <label class="form-label">Pincode</label>
+                            <input type="text" name="pincode" class="form-control" value="{{ current_user.pincode }}" required>
+                        </div>
+
+                        <!-- Payment Method Section -->
+                        <h5 class="mt-4">Payment Method</h5>
+                        <div class="mb-3">
+                            <!-- Cash on Delivery -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" value="cod" id="cod" checked>
+                                <label class="form-check-label" for="cod">
+                                    Cash on Delivery (COD)
+                                </label>
+                            </div>
+
+                            <!-- UPI -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" value="upi" id="upi">
+                                <label class="form-check-label" for="upi">
+                                    UPI (Simulated)
+                                </label>
+                            </div>
+
+                            <!-- Credit/Debit Card -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" value="card" id="card">
+                                <label class="form-check-label" for="card">
+                                    Credit/Debit Card (Simulated)
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Place Order Button -->
+                        <button type="submit" class="btn btn-success btn-lg w-100">
+                            <i class="bi bi-check-circle"></i> Place Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary Column -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Order Summary</h5>
+                    <hr>
+
+                    <!-- Cart Items List -->
+                    {% for item in cart_items %}
+                    {% set product = item.get_item() %}
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="small">{{ product.name }} x {{ item.quantity }}</span>
+                        <span class="small">{{ format_currency(item.subtotal) }}</span>
+                    </div>
+                    {% endfor %}
+
+                    <hr>
+
+                    <!-- Subtotal -->
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <span>{{ format_currency(subtotal) }}</span>
+                    </div>
+
+                    <!-- GST -->
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>GST (18%):</span>
+                        <span>{{ format_currency(gst) }}</span>
+                    </div>
+
+                    <hr>
+
+                    <!-- Total -->
+                    <div class="d-flex justify-content-between">
+                        <strong>Total:</strong>
+                        <strong class="price-tag">{{ format_currency(total) }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+```

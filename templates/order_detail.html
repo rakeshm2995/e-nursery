@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.id }}{% endblock %}
+{% block content %}
+<div class="container">
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('my_orders') }}">My Orders</a></li>
+            <li class="breadcrumb-item active">Order #{{ order.id }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <!-- Main Content Column -->
+        <div class="col-md-8">
+            <!-- Order Status Card -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5>Order #{{ order.id }}</h5>
+                    <p><strong>Tracking Number:</strong> {{ order.tracking_number }}</p>
+                    <p><strong>Order Date:</strong> {{ order.created_at.strftime('%d-%m-%Y %H:%M IST') }}</p>
+                    <p><strong>Estimated Delivery:</strong> {{ order.estimated_delivery.strftime('%d-%m-%Y') }}</p>
+                    
+                    <h6 class="mt-4">Order Status</h6>
+                    <div class="progress" style="height: 30px;">
+                        {% set statuses = ['Pending', 'Confirmed', 'Packed', 'Shipped', 'Out for Delivery', 'Delivered'] %}
+                        {% set current_index = statuses.index(order.order_status) if order.order_status in statuses else 0 %}
+                        {% set progress = ((current_index + 1) / statuses|length * 100)|int %}
+                        <div class="progress-bar bg-success" style="width: {{ progress }}%">{{ order.order_status }}</div>
+                    </div>
+                    
+                    {% if order.order_status not in ['Shipped', 'Out for Delivery', 'Delivered', 'Cancelled'] %}
+                    <a href="{{ url_for('cancel_order', id=order.id) }}" class="btn btn-danger mt-3" onclick="return confirm('Are you sure you want to cancel this order?')">Cancel Order</a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Order Items Card -->
+            <div class="card">
+                <div class="card-body">
+                    <h5>Order Items</h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Type</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.order_items %}
+                            <tr>
+                                <td>{{ item.item_name }}</td>
+                                <td><span class="badge bg-secondary">{{ item.item_type.title() }}</span></td>
+                                <td>{{ format_currency(item.price) }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>{{ format_currency(item.subtotal) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="4" class="text-end">Total:</th>
+                                <th class="price-tag">{{ format_currency(order.total_amount) }}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar Column -->
+        <div class="col-md-4">
+            <!-- Payment Information Card -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h6>Payment Information</h6>
+                    <p><strong>Method:</strong> {{ order.payment_method.upper() }}</p>
+                    <p><strong>Status:</strong> <span class="badge bg-info">{{ order.payment_status }}</span></p>
+                    <p><strong>Amount:</strong> {{ format_currency(order.total_amount) }}</p>
+                </div>
+            </div>
+            
+            <!-- Shipping Address Card -->
+            <div class="card">
+                <div class="card-body">
+                    <h6>Shipping Address</h6>
+                    <p>{{ order.shipping_address }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
